@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<hr>
+<a href="{% url 'index' %}"> back to home </a>
+<hr>
+       Store
+
+
+      {%  for item in subscription %}
+          <hr>
+          <p> Название: {{ item.title }}</p>
+          <p> Описание: {{ item.description }}</p>
+          <p> Лимит по времени:{{ item.is_limited }}</p>
+          <p> Цена: ${{ item.price }}</p>
+          <a href="{% url 'add_membership' item.pk %}"><button type="button" > Купить </button></a>
+      {% endfor %}
+</body>
+</html>

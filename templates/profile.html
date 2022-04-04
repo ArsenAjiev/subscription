@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1> Profile page </h1>
+<hr>
+<a href="{% url 'index' %}"> back to home </a>
+<hr>
+
+{%  for i in my_orders %}
+    {% if i.is_active %}
+
+ <p>1. membership: {{ i.membership.name }} </p>
+ <p>2. Название: {{ i.subscription.get_title_display }} </p>
+ <p>3. Описание: {{ i.subscription.description }} </p>
+ <p>4. Цена: $ {{ i.subscription.price }} </p>
+    {% if not i.is_limited %}
+ <p>5. количество: {{ i.quantity }} посещения </p>
+    {% else %}
+  <p>5. количество: без ограничений</p>
+    {% endif %}
+ <p>6. Дата покупки абонемента :{{ i.date_added }} </p>
+
+            {% if i.is_active %}
+ <p>7. Дата активации: {{ i.date_activation }} </p>
+            {% else %}
+  <p>7. Дата активации: Подписка не активирована </p>
+           {% endif %}
+
+        {% if i.is_active %}
+ <p>8. Состояние подписки: Активна </p>
+        {% else %}
+  <p>8. Состояние подписки: НЕ Активна </p>
+        {% endif %}
+
+        {% if i.is_limited %}
+ <p>9. Последний день посещения до : {{ i.paid_until }} </p>
+        {% else %}
+  <p>9. Количество оставшихся посещений: {{ i.quantity }} </p>
+        {% endif %}
+
+        {% if i.expired %}
+ <p> 10. Состояние абонемента: Использован  </p>
+        {% else %}
+  <p>10. Состояние абонемента: Не использован </p>
+        {% endif %}
+    <hr>
+    {% endif %}
+
+{% endfor %}
+
+
+
+{%  for i in my_orders %}
+        {% if not i.is_active %}
+            <p > Неактивные абонементы </p>
+ <p>1. membership: {{ i.membership.name }} </p>
+ <p>2. Название: {{ i.subscription.get_title_display }} </p>
+ <p>3. Описание: {{ i.subscription.description }} </p>
+ <p>4. Цена: $ {{ i.subscription.price }} </p>
+    {% if not i.is_limited %}
+ <p>5. количество: {{ i.quantity }} посещения </p>
+    {% else %}
+  <p>5. количество: без ограничений</p>
+    {% endif %}
+ <p>6. Дата покупки абонемента :{{ i.date_added }} </p>
+
+            {% if i.is_active %}
+ <p>7. Дата активации: {{ i.date_activation }} </p>
+            {% else %}
+  <p>7. Дата активации: Подписка не активирована </p>
+           {% endif %}
+
+        {% if i.is_active %}
+ <p>8. Состояние подписки: Активна </p>
+        {% else %}
+  <p>8. Состояние подписки: НЕ Активна </p>
+        {% endif %}
+
+        {% if i.is_limited %}
+ <p>9. Последний день посещения до : {{ i.paid_until }} </p>
+        {% else %}
+  <p>9. Количество оставшихся посещений: {{ i.quantity }} </p>
+        {% endif %}
+
+        {% if i.expired %}
+ <p> 10. Состояние абонемента: Использован  </p>
+        {% else %}
+  <p>10. Состояние абонемента: Не использован </p>
+        {% endif %}
+    <hr>
+    {% endif %}
+
+{% endfor %}
+
+</body>
+</html>
