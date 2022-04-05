@@ -16,5 +16,5 @@ class SubscriptionAdmin(admin.ModelAdmin):
 @admin.register(Order)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("membership", "subscription", "quantity", "is_limited", "date_added", "is_active",  "date_activation",
-                    "paid_until", "expired", "paid_limit", "paid_quantity")
+                    "paid_until", "expired", "paid_limit", "paid_quantity", "diff_date")
 

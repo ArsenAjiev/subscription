@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from web.views import index, profile, store, add_membership
+from web.views import index, profile, store, add_membership, activation, deactivation, delete_membership, check_visit
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +23,8 @@ urlpatterns = [
     path('profile/', profile, name='profile'),
     path('store/', store, name='store'),
     path('add_membership/<item_pk>/', add_membership, name='add_membership'),
+    path('activation/<item_pk>/', activation, name='activation'),
+    path('deactivation/<item_pk>/', deactivation, name='deactivation'),
+    path('delete_membership/<item_pk>/', delete_membership, name='delete_membership'),
+    path('check_visit/<item_pk>/', check_visit, name='check_visit'),
 ]

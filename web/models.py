@@ -75,9 +75,22 @@ class Order(models.Model):
             return False
 
     @property
-    # выводит информацию об истечении срока действия абонемента
+    # выводит информацию о виде абонемента (лимитированный, либо на количество покупок)
     def is_limited(self):
         return self.subscription.is_limited
+
+    @property
+    # указывает оставшееся количество дней до истечения срока действия абонемента
+    def diff_date(self):
+        if self.is_limited and self.is_active and self.paid_limit:
+            return self.paid_until - datetime.date.today()
+
+    # @property
+    # # выводит информацию об истечении срока действия абонемента
+    # def is_active_false(self):
+    #     if self.paid_limit == 0:
+    #         return self.is_active is False
+
 
     def __str__(self):
         return f" № {self.pk}"
