@@ -15,18 +15,18 @@ def add_months(main_date, months):
     return datetime.date(year, month, day)
 
 
-# пример работы
-x = datetime.datetime.now()
-print(datetime.datetime.now())
-# 2022-04-05 09:15:20.929525
-
-# плюс 3 месяца
-print(add_months(x, 3))
-# 2022-07-05
-
-# минус 2 месяца
-print(add_months(x, -2))
-# 2022-02-05
+# # пример работы
+# x = datetime.datetime.now()
+# print(datetime.datetime.now())
+# # 2022-04-05 09:15:20.929525
+#
+# # плюс 3 месяца
+# print(add_months(x, 3))
+# # 2022-07-05
+#
+# # минус 2 месяца
+# print(add_months(x, -2))
+# # 2022-02-05
 
 
 def index(request):
