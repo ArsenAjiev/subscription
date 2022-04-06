@@ -24,7 +24,18 @@
                           <p> Описание: {{ item.description }}</p>
                           <p> Лимит по времени:{{ item.is_limited }}</p>
                           <p> Цена: ${{ item.price }}</p>
-                          <a href="{% url 'add_membership' item.pk %}"><button type="button" > Купить </button></a>
+
+                          {% if request.user.is_authenticated %}
+                           <a href="{% url 'add_membership' item.pk %}"><button type="button" > Купить </button></a>
+                                <hr>
+                                  {% else %}
+                               <h2> Need registration to buy</h2>
+                                  {% endif%}
+
+
+
+
+
                       {% endfor %}
            </div>
 </div>

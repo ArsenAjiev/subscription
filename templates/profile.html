@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <!doctype html>
 <html lang="ru">
-  <head>
+<head>
     <!-- Обязательные метатеги -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
     <title>Title</title>
 </head>
 <body>
+
+
+<div class="container">
+
 <h1> Profile page </h1>
 <hr>
 <a href="{% url 'index' %}"> back to home </a>
@@ -19,135 +24,141 @@
 <a href="{% url 'store' %}"> store </a>
 <hr>
 
-<div class="container">
+    <div class="card">
+        <h1><u> Активные абонементы</u></h1>
+        <br>
+        {% for i in my_orders %}
+{#            Если абонемент активирован и не использован#}
+            {% if i.activation and  not i.expired %}
 
+                <p>1. membership: {{ i.membership.name }} </p>
+                <p>2. Название: {{ i.subscription.get_title_display }} </p>
+                <p>3. Описание: {{ i.subscription.description }} </p>
+                <p>4. Цена: $ {{ i.subscription.price }} </p>
+                {% if not i.is_limited %}
+                    <p>5. количество: {{ i.quantity }} посещения </p>
+                {% else %}
+                    <p>5. количество: без ограничений</p>
+                {% endif %}
+                <p>6. Дата покупки абонемента :{{ i.date_added }} </p>
 
-        <div class="card">
-         <h1> <u> Активные абонементы</u> </h1>
-         <br>
-                {%  for i in my_orders %}
-                    {% if i.is_active and  not i.expired %}
+                {% if i.is_active %}
+                    <p>7. Дата активации: {{ i.date_activation }} </p>
+                {% else %}
+                    <p>7. Дата активации: Подписка не активирована </p>
+                {% endif %}
 
-                 <p>1. membership: {{ i.membership.name }} </p>
-                 <p>2. Название: {{ i.subscription.get_title_display }} </p>
-                 <p>3. Описание: {{ i.subscription.description }} </p>
-                 <p>4. Цена: $ {{ i.subscription.price }} </p>
-                    {% if not i.is_limited %}
-                 <p>5. количество: {{ i.quantity }} посещения </p>
-                    {% else %}
-                  <p>5. количество: без ограничений</p>
-                    {% endif %}
-                 <p>6. Дата покупки абонемента :{{ i.date_added }} </p>
+                {% if i.is_active %}
+                    <p>8. Состояние подписки: Активна </p>
+                {% else %}
+                    <p>8. Состояние подписки: НЕ Активна </p>
+                {% endif %}
 
-                            {% if i.is_active %}
-                 <p>7. Дата активации: {{ i.date_activation }} </p>
-                            {% else %}
-                  <p>7. Дата активации: Подписка не активирована </p>
-                           {% endif %}
+                {% if i.diff_date %}
+                    <p>9. Последний день посещения: {{ i.paid_until }}, Осталось: {{ i.diff_date }}  </p>
+                {% else %}
+                    <p>9. Количество оставшихся посещений: {{ i.quantity }} </p>
+                {% endif %}
 
-                        {% if i.is_active %}
-                 <p>8. Состояние подписки: Активна </p>
-                        {% else %}
-                  <p>8. Состояние подписки: НЕ Активна </p>
-                        {% endif %}
+                {% if i.expired %}
+                    <p> 10. Состояние абонемента: Использован </p>
+                {% else %}
+                    <p>10. Состояние абонемента: Не использован </p>
 
-                        {% if i.diff_date %}
-                 <p>9. Последний день посещения: {{ i.paid_until }}, Осталось: {{ i.diff_date }}  </p>
-                        {% else %}
-                  <p>9. Количество оставшихся посещений: {{ i.quantity }} </p>
-                        {% endif %}
+                {% endif %}
+                <a href="{% url 'delete_membership' i.pk %}">
+                    <button type="button"> Удалить абонемент</button>
+                </a>
 
-                        {% if i.expired %}
-                 <p> 10. Состояние абонемента: Использован  </p>
-                        {% else %}
-                  <p>10. Состояние абонемента: Не использован </p>
+                {% if not i.is_limited %}
+                    <a href="{% url 'check_visit' i.pk %}">
+                        <button type="button"> Отметить посещение</button>
+                    </a>
+                {% endif %}
+                <hr>
+            {% endif %}
+        {% endfor %}
+    </div>
 
-                        {% endif %}
-     <a href="{% url 'deactivation' i.pk %}"><button type="button" > Деактивировать абонемент </button></a>
-     <a href="{% url 'delete_membership' i.pk %}"><button type="button" > Удалить абонемент </button></a>
+    <div class="card">
+        <h1><u> Неактивные абонементы</u></h1>
+        <br>
+        {% for i in my_orders %}
+{#            Если абонемент не активирован#}
+            {% if not i.activation %}
+                <h4>1. Название: {{ i.subscription.get_title_display }} </h4>
+                <p>2. membership: {{ i.membership.name }} </p>
 
-                        {% if not i.is_limited %}
-     <a href="{% url 'check_visit' i.pk %}"><button type="button" > Отметить посещение </button></a>
-                        {% endif %}
-                    <hr>
-                    {% endif %}
+                <p>3. Описание: {{ i.subscription.description }} </p>
+                <p>4. Цена: $ {{ i.subscription.price }} </p>
+                {% if not i.is_limited %}
+                    <p>5. количество: {{ i.quantity }} посещения </p>
+                {% else %}
+                    <p>5. количество: без ограничений</p>
+                {% endif %}
+                <p>6. Дата покупки абонемента :{{ i.date_added }} </p>
 
-                {% endfor %}
-        </div>
+                {% if i.is_active %}
+                    <p>7. Дата активации: {{ i.date_activation }} </p>
+                {% else %}
+                    <p>7. Дата активации: Подписка не активирована </p>
+                {% endif %}
 
-        <div class="card">
-         <h1> <u> Неактивные абонементы</u> </h1>
-         <br>
+                {% if i.is_active %}
+                    <p>8. Состояние подписки: Активна </p>
+                {% else %}
+                    <p>8. Состояние подписки: НЕ Активна </p>
+                {% endif %}
 
-                {%  for i in my_orders %}
-                        {% if not i.is_active %}
-                 <h4>1. Название: {{ i.subscription.get_title_display }} </h4>
-                 <p>2. membership: {{ i.membership.name }} </p>
+                {% if i.expired %}
+                    <p> 9. Состояние абонемента: Использован </p>
+                {% else %}
+                    <p>9. Состояние абонемента: Не использован </p>
+                {% endif %}
 
-                 <p>3. Описание: {{ i.subscription.description }} </p>
-                 <p>4. Цена: $ {{ i.subscription.price }} </p>
-                    {% if not i.is_limited %}
-                 <p>5. количество: {{ i.quantity }} посещения </p>
-                    {% else %}
-                  <p>5. количество: без ограничений</p>
-                    {% endif %}
-                 <p>6. Дата покупки абонемента :{{ i.date_added }} </p>
+                <a href="{% url 'activation' i.pk %}">
+                    <button type="button"> Активировать абонемент</button>
+                </a>
+                <a href="{% url 'delete_membership' i.pk %}">
+                    <button type="button"> Удалить абонемент</button>
+                </a>
+            {% endif %}
+        {% endfor %}
 
-                            {% if i.is_active %}
-                 <p>7. Дата активации: {{ i.date_activation }} </p>
-                            {% else %}
-                  <p>7. Дата активации: Подписка не активирована </p>
-                           {% endif %}
+    </div>
 
-                        {% if i.is_active %}
-                 <p>8. Состояние подписки: Активна </p>
-                        {% else %}
-                  <p>8. Состояние подписки: НЕ Активна </p>
-                        {% endif %}
+    <div class="card">
+        <h1><u> Архив абонементов </u></h1>
+        <br>
+        {% for i in my_orders %}
+{#             Если абонемент активирован и был использован#}
+            {% if i.activation and  i.expired %}
 
-                        {% if i.expired %}
-                 <p> 9. Состояние абонемента: Использован  </p>
-                        {% else %}
-                  <p>9. Состояние абонемента: Не использован </p>
-                        {% endif %}
+                <p>1. membership: {{ i.membership.name }} </p>
+                <p>2. Название: {{ i.subscription.get_title_display }} </p>
+                <p>3. Описание: {{ i.subscription.description }} </p>
+                <p>4. Цена: $ {{ i.subscription.price }} </p>
+                <p>5. Дата покупки абонемента :{{ i.date_added }} </p>
+                {% if i.expired %}
+                    <p> 6. Состояние абонемента: Использован </p>
+                {% else %}
+                    <p> 6. Состояние абонемента: Не использован </p>
 
-                           <a href="{% url 'activation' i.pk %}"><button type="button" > Активировать абонемент </button></a>
-                           <a href="{% url 'delete_membership' i.pk %}"><button type="button" > Удалить абонемент </button></a>
-                    {% endif %}
-
-                        <hr>
-                {% endfor %}
-
-        </div>
-
-        <div class="card">
-         <h1> <u> Архив абонементов </u> </h1>
-         <br>
-                {%  for i in my_orders %}
-                    {% if i.is_active and  i.expired %}
-
-                 <p>1. membership: {{ i.membership.name }} </p>
-                 <p>2. Название: {{ i.subscription.get_title_display }} </p>
-                 <p>3. Описание: {{ i.subscription.description }} </p>
-                 <p>4. Цена: $ {{ i.subscription.price }} </p>
-                 <p>5. Дата покупки абонемента :{{ i.date_added }} </p>
-                        {% if i.expired %}
-                 <p> 6. Состояние абонемента: Использован  </p>
-                        {% else %}
-                  <p> 6. Состояние абонемента: Не использован </p>
-
-                        {% endif %}
-     <a href="{% url 'delete_membership' i.pk %}"><button type="button" > Удалить абонемент </button></a>
-                    <hr>
-                    {% endif %}
-
-                {% endfor %}
-        </div>
+                {% endif %}
+                <a href="{% url 'delete_membership' i.pk %}">
+                    <button type="button"> Удалить абонемент</button>
+                </a>
+                <hr>
+            {% endif %}
+        {% endfor %}
+    </div>
 
 </div>
 
 <!-- Вариант 1: пакет Bootstrap с Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
 
 
 </body>
