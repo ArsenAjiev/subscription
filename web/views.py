@@ -2,7 +2,7 @@ import calendar
 import datetime
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-
+from django.contrib.auth.decorators import login_required
 from web.models import *
 
 
@@ -37,12 +37,10 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+@login_required
 def profile(request):
-    if request.user.is_authenticated:
-        membership = request.user.membership
-        my_orders = Order.objects.filter(membership=membership)
-    else:
-        return HttpResponse('need registration')
+    membership = request.user.membership
+    my_orders = Order.objects.filter(membership=membership)
     context = {
         'my_orders': my_orders
     }
@@ -57,46 +55,40 @@ def store(request):
     return render(request, 'store.html', context)
 
 
+@login_required
 def add_membership(request, item_pk):
-    if request.user.is_authenticated:
-        membership = request.user.membership
-        subscription = get_object_or_404(Subscription, pk=item_pk)
-        # если абонемент не лимитируемый, то кол-во посещений это первое число CHOIOSE "4t", преобразованное к int.
-        if not subscription.is_limited:
-            quantity = int(subscription.title[0])
-        else:
-            quantity = 0
-        print(quantity)
-
-        Order.objects.create(
-            membership=membership,
-            subscription=subscription,
-            paid_until=None,
-            quantity=quantity
-        )
+    membership = request.user.membership
+    subscription = get_object_or_404(Subscription, pk=item_pk)
+    # если абонемент не лимитируемый, то кол-во посещений это первое число CHOIOSE "4t", преобразованное к int.
+    if not subscription.is_limited:
+        quantity = int(subscription.title[0])
     else:
-        return HttpResponse('need registration for adding membership')
+        quantity = 0
+    print(quantity)
 
+    Order.objects.create(
+        membership=membership,
+        subscription=subscription,
+        paid_until=None,
+        quantity=quantity
+    )
     return redirect('profile')
 
 
+@login_required
 def activation(request, item_pk):
-    if request.user.is_authenticated:
-        # membership = request.user.membership
-        order = get_object_or_404(Order, pk=item_pk)
-        date_now = datetime.date.today()
-        # если абонемент лимитируемый, то к дате активации прибавляем количество месяцев -
-        # это первое число CHOIOSE "3m", преобразованное к int.
-        order.activation = True
-        order.date_activation = datetime.date.today()
-        if order.is_limited:
-            count_month = int(order.subscription.title[0])
-            order.paid_until = add_months(date_now, count_month)
-        order.save()
-        print(order)
-    else:
-        return HttpResponse('need registration for activation')
-
+    # membership = request.user.membership
+    order = get_object_or_404(Order, pk=item_pk)
+    date_now = datetime.date.today()
+    # если абонемент лимитируемый, то к дате активации прибавляем количество месяцев -
+    # это первое число CHOIOSE "3m", преобразованное к int.
+    order.activation = True
+    order.date_activation = datetime.date.today()
+    if order.is_limited:
+        count_month = int(order.subscription.title[0])
+        order.paid_until = add_months(date_now, count_month)
+    order.save()
+    print(order)
     return redirect('profile')
 
 
@@ -111,24 +103,20 @@ def activation(request, item_pk):
 #     return redirect('profile')
 
 
+@login_required
 def delete_membership(request, item_pk):
-    if request.user.is_authenticated:
-        # membership = request.user.membership
-        order = get_object_or_404(Order, pk=item_pk)
-        print(order)
-        order.delete()
-    else:
-        return HttpResponse('need registration for delete')
+    # membership = request.user.membership
+    order = get_object_or_404(Order, pk=item_pk)
+    print(order)
+    order.delete()
     return redirect('profile')
 
 
+@login_required
 def check_visit(request, item_pk):
-    if request.user.is_authenticated:
-        # membership = request.user.membership
-        order = get_object_or_404(Order, pk=item_pk)
-        print(order)
-        order.quantity = (order.quantity - 1)
-        order.save()
-    else:
-        return HttpResponse('need registration for check')
+    # membership = request.user.membership
+    order = get_object_or_404(Order, pk=item_pk)
+    print(order)
+    order.quantity = (order.quantity - 1)
+    order.save()
     return redirect('profile')
